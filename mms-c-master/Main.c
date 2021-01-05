@@ -36,7 +36,7 @@ int deadReckoning[6][8] = {{10,9,8,7,6,5,4,5},
 */
 
 /*
-Adapted from "8by6Maze.txt":
+Weight from goal, adapted from "8by6Maze.txt":
 o---o---o---o---o---o---o---o---o
 |10   9   8   7   6   5   4   5 |
 o   o---o   o---o---o---o   o---o
@@ -62,6 +62,7 @@ o   o     o---o     o   o     o---o     o---o     o---o     o   o     o---o
 o   o     o---o     o   o     o---o     o   o     o---o     o   o     o---o
 
 */
+
 
 void updateWalls(int x, int y, int o, int L, int R, int F){
     //
@@ -206,32 +207,132 @@ bool isAccessible(int x, int y, int x1, int y1){
 
 }
 
-int getSurrounds(int x, int y){
-    // Return x1, y1,x2,y2, x3, y3, x4, y4 (surrounding square)
-    int x3=x-1;
-    int y3=y;
-    int x0=x;
-    int y0=y+1;
-    int x1=x+1;
-    int y1=y;
-    int x2=x;
-    int y2=y-1;
-    if(x1>=16){
-        x1=-1;
+void getSurrounds(int x, int y, int* x0, int* y0, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3){
+    // Return x1, y1, x2, y2, x3, y3, x4, y4 (surrounding square)
+    // north,east,south,west.
+    *x3=x-1;
+    *y3=y;
+    *x0=x;
+    *y0=y+1;
+    *x1=x+1;
+    *y1=y;
+    *x2=x;
+    *y2=y-1;
+    if(*x1>=16){
+        *x1=-1;
     }
-    if(y0>=16){
-        y0=-1;
+    if(*y0>=16){
+        *y0=-1;
     }
-    return(x0,y0,x1,y1,x2,y2,x3,y3); // north,east,south,west.
 }
+
+int min(int arr[]){
+    int m;
+    for(int j=0; arr[j] != '\0'; j++){
+        for(int i=0; arr[i] != '\0'; i++){
+            if (arr[i] < arr[j]){
+                m = arr[i];
+	    }
+        }
+    }
+    return(m);
+}
+
 
 bool isConsistant(int x, int y){
     // Returns True if value of current square is one 
     // greater than the miniumum value in an accessible neighbour
-    x0,y0,x1,y1,x2,y2,x3,y3 = getSurrounds(x,y); // N,E,S,W
-    
+    int x0,y0,x1,y1,x2,y2,x3,y3;
+    getSurrounds(x,y,&x0,&y0,&x1,&y1,&x2,&y2,&x3,&y3);
+    /* Location Test
+    fprintf(stderr, "When robot is at (%d,%d):\n\tN(%d,%d), \nW(%d,%d)\t\tE(%d,%d), \n\tS(%d,%d)\n", x,y,x0,y0,x3,y3,x1,y1,x2,y2);
+    */
+    int val= flood[x][y];
+    int minVals[4]={-1,-1,-1,-1};
+    if(x0>=0 && y0>=0){
+        if(isAccessible(x,y,x0,y0)){
+	    minVals[0]=flood[y0][x0];
+        }
+    }
+    if(x1>=0 && y1>=0){
+        if(isAccessible(x,y,x1,y1)){
+            minVals[1]=flood[y1][x1];
+	}
+    }
+    if(x2>=0 && y2>=0){
+        if(isAccessible(x,y,x2,y2)){
+            minVals[2]=flood[y2][x2];
+	}
+    }
+    if(x3>=0 && y3>=0){
+        if(isAccessible(x,y,x3,y3)){
+            minVals[3]=flood[y3][x3];
+	}
+    }
+
+    int minCount = 0;
+    for(int i = 0; i<4;i++){
+        //
+	if(minVals[i]==-1){
+	    //
+	}
+	else if(minVals[i]==val+1){
+	    //
+	}
+	else if(minVals[i]==val-1){
+	    minCount++;
+	    //
+	}
+    }
+    //minVal=min(minVals)
+    //return(minVal)
+    if(minCount>0){
+        return(true);
+    }
+    else{
+        return(false);
+    }
 }
 
+void makeConsistant(int x, int y){
+    int x0,y0,x1,y1,x2,y2,x3,y3;
+    getSurrounds(x,y,&x0,&y0,&x1,&y1,&x2,&y2,&x3,&y3);
+    int val=flood[y][x];
+    int minVals[4]={-1,-1,-1,-1};
+    if(x0>=0 && y0>=0){
+	if(isAccessible(x, y, x0, y0)){
+            minVals[0]=flood[y0][x0];
+	    // if(flood[y0][x0]<minVal){}
+	}
+    }
+    if(x1>=0 && y1>=0){
+        if(isAccessible(x, y, x1, y1)){
+            minVals[1]=flood[y1][x1];
+            // if(flood[y1][x1]<minVal){}
+	}
+    }
+    if(x2>=0 && y2>=0){
+        if(isAccessible(x, y, x2, y2)){
+            minVals[2]=flood[y2][x2];
+            // if(flood[y2][x2]<minVal){}
+	}
+    }
+    if(x3>=0 && y3>=0){
+        if(isAccessible(x, y, x3, y3)){
+            minVals[3]=flood[y3][x3];
+            // if(flood[y3][x3]<minVal){}
+	}
+    }
+    for(int i=0;i<4;i++){
+        if(minVals[i]==-1){
+	    minVals[i]=1000;
+	}
+    }
+    int minVal=min(minVals);// New Function above - int min(int arr)
+    flood[y][x]=minVal+1;
+
+
+}
 
 
 void logTxt(char* text) {
@@ -243,6 +344,14 @@ int main(int argc, char* argv[]) {
     logTxt("Running...");
     API_setColor(0, 0, 'G');
     API_setText(0, 0, "abc");
+    //testing
+    int x=1;
+    int y=1;
+    int x0,y0,x1,y1,x2,y2,x3,y3;
+    getSurrounds(x,y,&x0,&y0,&x1,&y1,&x2,&y2,&x3,&y3);
+    fprintf(stderr, "When robot is at (%d,%d):\n\tN(%d,%d), \nW(%d,%d)\t\tE(%d,%d), \n\tS(%d,%d)\n", x,y,x0,y0,x3,y3,x1,y1,x2,y2);
+    // end test
+    
     while (1) {
         if (!API_wallLeft()) {
             API_turnLeft();
