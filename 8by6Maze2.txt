@@ -1,0 +1,33 @@
+o---o---o---o---o---o---o---o---o---o---o---o---o---o---o---o---o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|                                                               |
+o---o---o---o---o---o---o---o---o   o   o   o   o   o   o   o   o
+|         8   7   6   5   4     |                               |
+o   o---o   o---o---o---o   o---o   o   o   o   o   o   o   o   o
+|       | 9     | 1   2   3   4 |                               |
+o   o---o   o---o   o   o   o   o   o   o   o   o   o   o   o   o
+|   |       | 0   0 | 3 | 4 | 5 |                               |
+o   o   o---o   o   o   o   o   o   o   o   o   o   o   o   o   o
+|   |       | 0   0 | 4 | 5 | 6 |                               |
+o   o   o   o---o---o---o   o---o   o   o   o   o   o   o   o   o
+|   |   |     9   8   7   6   7 |                               |
+o   o---o   o---o   o---o---o---o   o   o   o   o   o   o   o   o
+| 0 |           | 9   9   9   9 |                               |
+o---o---o---o---o---o---o---o---o---o---o---o---o---o---o---o---o

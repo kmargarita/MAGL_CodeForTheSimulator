@@ -1,9 +1,12 @@
 /*Main.c*/
 
-
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
 #include "API.h"
+#include "uthash.h"
 
 // Dimensions(8,6) goal at (3,2),(3,3),(4,2),(4,3). Start at (0,0).
 int x = 0;
@@ -50,7 +53,56 @@ o   o   o   o---o---o---o   o---o
 o   o---o   o---o   o---o---o---o
 |15 |12  11  12 | 9  10  11  12 | The * Denotes robot choice because 
 o---o---o---o---o---o---o---o---o there are equal weights surrounding it.
+*/
 
+// Implement an int hash table to append int "arrays" in C.
+struct number_hash{
+    int value;
+    int index;
+    UT_hash_handle hh; /* Makes structure hashable*/
+};
+
+void destroy_table(struct number_hash** table){
+    struct number_hash* curr;
+    struct number_hash* tmp;
+    HASH_ITER(hh, *table, curr, tmp){
+        HASH_DEL(*table, curr);
+	free(curr);
+    }
+}
+
+void append(int value){
+
+int* twoSum(int* nums, int numsSize, int target, int* returnSize){
+    struct number_hash *table = NULL;
+    struct number_hash *element;
+    int *ret =  (int*) malloc(2 * sizeof(int));
+    int remaining;
+    for (int i=0; i<numsSize; i++){
+        remaining = target - nums[i];
+        
+        // Add new number to the hash table if not already added
+        HASH_FIND_INT(table, &remaining, element);
+        if(element){
+            ret[0] = element->index;
+            ret[1] = i;
+            break;
+        }
+
+        HASH_FIND_INT(table, &nums[i], element);
+        if(!element){
+            element = (struct number_hash *) malloc(sizeof(*element));
+            element->value = nums[i];
+            element->index = i;
+            HASH_ADD_INT(table, value, element);
+    }
+    }
+    destroy_table(&table);
+    *returnSize = 2;
+    return ret;
+}
+
+/*
 Updating The Walls: (cells[y][x]=)
 
 o   o     o---o     o   o     o   o     o   o     o   o     o---o     o---o
@@ -60,7 +112,6 @@ o   o     o   o     o   o     o---o     o---o     o---o     o   o     o   o
 o   o     o---o     o   o     o---o     o---o     o---o     o   o     o---o
 |   | = 9       =10 |   | =11     | =12 |   | =13 |     =14       =15 |   | =16. 
 o   o     o---o     o   o     o---o     o   o     o---o     o   o     o---o
-
 */
 
 
@@ -330,9 +381,19 @@ void makeConsistant(int x, int y){
     }
     int minVal=min(minVals);// New Function above - int min(int arr)
     flood[y][x]=minVal+1;
-
-
 }
+
+void floodFill(x,y,xprev,yprev){
+    // Updates Flood[][] to current cell(x,y).
+    if(!isConsistant(x,y)){
+        //
+	flood[y][x]=flood[yprev][xprev]+1;
+    }
+    int stack[]; // New Function above - append(int*,  int )
+    append(stack, )
+}
+
+
 
 
 void logTxt(char* text) {
