@@ -390,7 +390,8 @@ void floodFill(x,y,xprev,yprev){
 	flood[y][x]=flood[yprev][xprev]+1;
     }
     int stack[]; // New Function above - append(int*,  int )
-    append(stack, )
+    append(stack, ) //stack append(x), stack append(y)
+
 }
 
 
