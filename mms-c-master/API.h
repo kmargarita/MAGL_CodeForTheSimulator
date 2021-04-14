@@ -24,3 +24,10 @@ void API_clearAllText();
 
 int API_wasReset();
 void API_ackReset();
+
+// Katherine's API functions
+int API_orientation(int orient, char turning);
+
+//
+void strreverse(char* begin, char* end);
+void itoa(int value, char* str, int base);

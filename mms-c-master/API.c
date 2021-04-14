@@ -110,3 +110,74 @@ int API_wasReset() {
 void API_ackReset() {
     getAck("ackReset");
 }
+
+// Katherine's API functions:
+
+/*  orient:
+    0- North
+    1- East
+    2- South
+    3- West
+*/
+int API_orientation(int orient, char turning){
+    if(turning=='L'){
+        orient--;
+        if(orient == -1){
+            orient = 3;
+        }
+    }
+    else if(turning=='R'){
+        orient++;
+        if(orient==4){
+            orient = 0;
+        }
+    }
+    else if(turning=='B'){
+        if(orient==0){
+            orient = 2;
+        }
+        else if(orient==1){
+            orient=3;
+        }
+        else if(orient==2){
+            orient = 0;
+        }
+        else if(orient==3){
+            orient = 1;
+        }
+    }
+    return orient;
+}
+
+/**
+ * Ansi C "itoa" based on Kernighan & Ritchie's "Ansi C"
+ * with slight modification to optimize for specific architecture:
+ * If itoa doesn't compile, alternatives: 
+ * http://www.strudel.org.uk/itoa/
+ */
+    
+void strreverse(char* begin, char* end){
+    char aux;
+    while(end>begin)
+        aux=*end, *end--=*begin, *begin++=aux;
+}
+    
+void itoa(int value, char* str, int base){
+    static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    char* wstr=str;
+    int sign;
+    div_t res;
+    // Validate base
+    if (base<2 || base>35){ *wstr='\0'; return; }
+    // Take care of sign
+    if ((sign=value) < 0) value = -value;
+    // Conversion. Number is reversed.
+    do {
+        res = div(value,base);
+        *wstr++ = num[res.rem];
+    }while(value=res.quot);
+    if(sign<0) *wstr++='-';
+    *wstr='\0';
+    // Reverse string
+    strreverse(str,wstr-1);
+}
