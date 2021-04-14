@@ -17,6 +17,8 @@ int Return_Home = 0;
 // Dimensions(8,6) goal at (3,2),(3,3),(4,2),(4,3). Start at (0,0).
 int x = 0;
 int y = 0;
+int xprev=0;
+int yprev=0;
 int o = 0; // orientation
 int x0,y_0,x1,y_1,x2,y2,x3,y3;
 int L,R,F;
@@ -30,12 +32,45 @@ int cells[6][8] = {{0,0,0,0,0,0,0,0},
 		           {0,0,0,0,0,0,0,0}};
 
 // Default Flood for a wall-less 8x6 Matrix, goal(3,2),(3,3),(4,2),(4,3).
+
 int flood[6][8] = {{5,4,3,2,2,3,4,5},
+                   {4,3,2,1,1,2,3,4},
+                   {3,2,1,0,0,1,2,3},
+                   {3,2,1,0,0,1,2,3},
+                   {4,3,2,1,1,2,3,4},
+                   {5,4,3,2,2,3,4,5}};
+
+/*
+int cells[8][6] = {{0,0,0,0,0,0},
+                   {0,0,0,0,0,0},
+                   {0,0,0,0,0,0},
+                   {0,0,0,0,0,0},
+                   {0,0,0,0,0,0},
+                   {0,0,0,0,0,0},
+                   {0,0,0,0,0,0},
+                   {0,0,0,0,0,0}};
+
+// Default Flood for a wall-less 8x6 Matrix, goal(3,2),(3,3),(4,2),(4,3).
+int flood[8][6] = {{5,4,3,3,4,5},
+                   {4,3,2,2,3,4},
+                   {3,2,1,1,2,3},
+                   {2,1,0,0,1,2},
+                   {2,1,0,0,1,2},
+                   {3,2,1,1,2,3},
+                   {4,3,2,2,3,4},
+                   {5,4,3,3,4,5}};
+int cells[8][6] =                 
+
+
+
+                {{5,4,3,2,2,3,4,5},
 	               {4,3,2,1,1,2,3,4},
 		           {3,2,1,0,0,1,2,3},
 		           {3,2,1,0,0,1,2,3},
 		           {4,3,2,1,1,2,3,4},
 		           {5,4,3,2,2,3,4,5}};
+
+*/
 
 // Flood Weightings for "8by6Maze.txt" with walls
 /*
@@ -74,7 +109,7 @@ o   o     o---o     o   o     o---o     o---o     o---o     o   o     o---o
 o   o     o---o     o   o     o---o     o   o     o---o     o   o     o---o
 */
 
-#define SIZE 10
+#define SIZE 300
 #define EMPTY -1
 
 struct stack {
@@ -84,12 +119,14 @@ struct stack {
 
 void initialize(struct stack* stackPtr) {
      stackPtr->top = -1;
+     //
 }
 
 
 // Returns true iff the stack pointed to by stackPtr is full.
 int full(struct stack* stackPtr) {
     return (stackPtr->top == SIZE - 1);
+    //
 }
 
 int push(struct stack* stackPtr, int value) {
@@ -106,6 +143,7 @@ int push(struct stack* stackPtr, int value) {
 // Returns true iff the stack pointed to by stackPtr is empty.
 int empty(struct stack* stackPtr) {
     return (stackPtr->top == -1);
+    //
 }
 
 int pop(struct stack* stackPtr) {
@@ -134,7 +172,7 @@ int top(struct stack* stackPtr) {
 }
 
 
-void updateWalls(int x, int y, int o, int L, int R, int F){
+void updateWalls(int x, int y, int o, int L, int R, int F){ // checked
     //
     if(L && R && F){
         if(o==0){
@@ -165,73 +203,73 @@ void updateWalls(int x, int y, int o, int L, int R, int F){
         else if(o==1){
             cells[y][x]=7;
         }
-	else if(o==2){
-	    cells[y][x]=6;
-	}
-	else if(o==3){
-	    cells[y][x]=5;
-	}
+    	else if(o==2){
+    	    cells[y][x]=6;
+    	}
+    	else if(o==3){
+    	    cells[y][x]=5;
+    	}
     }
     else if(R && F && !L){
         if(o==0){
-	    cells[y][x]=7;
-	}
-	else if(o==1){
-	    cells[y][x]=6;
-	}
-	else if(o==2){
-	    cells[y][x]=5;
-	}
-	else if(o==3){
-	    cells[y][x]=8;
-	}
+    	    cells[y][x]=7;
+    	}
+    	else if(o==1){
+    	    cells[y][x]=6;
+    	}
+    	else if(o==2){
+    	    cells[y][x]=5;
+    	}
+    	else if(o==3){
+    	    cells[y][x]=8;
+    	}
     }
     else if(F){
-        if(o==0){
-	    cells[y][x]=2;
-	}
-	else if(o==1){
-	    cells[y][x]=3;
-	}
-	else if(o==2){
-	    cells[y][x]=4;
-	}
-	else if(o==3){
-	    cells[y][x]=1;
-	}
+        if(o==1){
+    	    cells[y][x]=2;
+    	}
+    	else if(o==1){
+    	    cells[y][x]=3;
+    	}
+    	else if(o==2){
+    	    cells[y][x]=4;
+    	}
+    	else if(o==3){
+    	    cells[y][x]=1;
+    	}
     }
     else if(L){
         if(o==0){
-	    cells[y][x]=1;
-	}
-	else if(o==1){
-	    cells[y][x]=2;
-	}
-	else if(o==2){
-	    cells[y][x]=3;
-	}
-	else if(o==3){
-	    cells[y][x]=4;
-	}
+    	    cells[y][x]=1;
+    	}
+    	else if(o==1){
+    	    cells[y][x]=2;
+    	}
+    	else if(o==2){
+    	    cells[y][x]=3;
+    	}
+    	else if(o==3){
+    	    cells[y][x]=4;
+    	}
     }
     else if(R){
         if(o==0){
-	    cells[y][x]=3;
-	}
-	else if(o==1){
-	    cells[y][x]=4;
-	}
-	else if(o==2){
-	    cells[y][x]=1;
-	}
-	else if(o==3){
-	    cells[y][x]=2;
-	}
+    	    cells[y][x]=3;
+    	}
+    	else if(o==1){
+    	    cells[y][x]=4;
+    	}
+    	else if(o==2){
+    	    cells[y][x]=1;
+    	}
+    	else if(o==3){
+    	    cells[y][x]=2;
+    	}
     }
 
 }
 
-bool isAccessible(int x, int y, int x1, int y_1){
+bool isAccessible(int x, int y, int x1, int y_1){ // checked
     // Returns True if mouse can move to (x1,y_1) from(x,y)
     if(x==x1){
     	if(y>y_1){
@@ -271,7 +309,7 @@ bool isAccessible(int x, int y, int x1, int y_1){
     }
 
 }
-
+//checked
 void getSurrounds(int x, int y, int* x0, int* y_0, int* x1, int* y_1, int* x2, int* y2, int* x3, int* y3){
     // Return x1, y_1, x2, y2, x3, y3, x4, y4 (surrounding square)
     // north,east,south,west.
@@ -283,10 +321,10 @@ void getSurrounds(int x, int y, int* x0, int* y_0, int* x1, int* y_1, int* x2, i
     *y_1=y;
     *x2=x;
     *y2=y-1;
-    if(*x1>=8){ // if over border of (8,6) map
+    if(*x1>=6){ // if over border of (8,6) map
         *x1=-1;
     }
-    if(*y_0>=6){
+    if(*y_0>=8){
         *y_0=-1;
     }
     /*   
@@ -301,31 +339,28 @@ void getSurrounds(int x, int y, int* x0, int* y_0, int* x1, int* y_1, int* x2, i
     */
 }
 
-int min(int arr[]){
-    int m;
-    for(int j=0; arr[j] != '\0'; j++){
-        for(int i=0; arr[i] != '\0'; i++){
-            if (arr[i] < arr[j]){
+int min(int arr[]){//checked for arr[4]
+    int m = arr[0];
+    for(int j=0; j<4; j++){
+        for(int i=0; i<4; i++){
+            if (arr[i] < arr[j] && arr[i]<m){
                 m = arr[i];
-	    }
+            }
         }
     }
     return(m);
 }
 
 
-bool isConsistant(int x, int y){
+bool isConsistant(int x, int y){//checked
     // Returns True if value of current square is one 
     // greater than the miniumum value in an accessible neighbour
     getSurrounds(x,y,&x0,&y_0,&x1,&y_1,&x2,&y2,&x3,&y3);
-    /* Location Test
-    fprintf(stderr, "When robot is at (%d,%d):\n\tN(%d,%d), \nW(%d,%d)\t\tE(%d,%d), \n\tS(%d,%d)\n", x,y,x0,y_0,x3,y3,x1,y_1,x2,y2);
-    */
-    int val= flood[y][x];
+    int val = flood[y][x];
     int minVals[4]={-1,-1,-1,-1};
     if(x0>=0 && y_0>=0){
         if(isAccessible(x,y,x0,y_0)){
-	    minVals[0]=flood[y_0][x0];
+            minVals[0]=flood[y_0][x0];
         }
     }
     if(x1>=0 && y_1>=0){
@@ -343,22 +378,16 @@ bool isConsistant(int x, int y){
             minVals[3]=flood[y3][x3];
         }
     }
-
     int minCount = 0;
     for(int i = 0; i<4; i++){
     	if(minVals[i]==-1){
-    	    //
     	}
     	else if(minVals[i]==val+1){
-    	    //
     	}
     	else if(minVals[i]==val-1){
     	    minCount++;
-    	    //
     	}
     }
-    //minVal=min(minVals)
-    //return(minVal)
     if(minCount>0){
         return(true);
     }
@@ -367,40 +396,36 @@ bool isConsistant(int x, int y){
     }
 }
 
-void makeConsistant(int x, int y){
+void makeConsistant(int x, int y){ //checked
     getSurrounds(x,y,&x0,&y_0,&x1,&y_1,&x2,&y2,&x3,&y3);
-    int val=flood[y][x];
-    int minVals[4]={-1,-1,-1,-1};
+    int findmin[4]={-1,-1,-1,-1};
     if(x0>=0 && y_0>=0){
     	if(isAccessible(x, y, x0, y_0)){
-                minVals[0]=flood[y_0][x0];
-    	    // if(flood[y_0][x0]<minVal){}
+            findmin[0]=flood[y_0][x0];
     	}
     }
     if(x1>=0 && y_1>=0){
         if(isAccessible(x, y, x1, y_1)){
-            minVals[1]=flood[y_1][x1];
-            // if(flood[y_1][x1]<minVal){}
+            findmin[1]=flood[y_1][x1];
         }
     }
     if(x2>=0 && y2>=0){
         if(isAccessible(x, y, x2, y2)){
-            minVals[2]=flood[y2][x2];
-            // if(flood[y2][x2]<minVal){}
+            findmin[2]=flood[y2][x2];
         }
     }
     if(x3>=0 && y3>=0){
         if(isAccessible(x, y, x3, y3)){
-            minVals[3]=flood[y3][x3];
-            // if(flood[y3][x3]<minVal){}
+            findmin[3]=flood[y3][x3];
         }
     }
-    for(int i=0;i<4;i++){
-        if(minVals[i]==-1){
-	    minVals[i]=1000;
-	   }
+    for(int i=0; i<4;i++){
+        if(findmin[i]==-1){
+            findmin[i]=1000;
+        }
     }
-    int minVal=min(minVals);// New Function above - int min(int arr)
+    int minVal=min(findmin);
+    fprintf(stderr, "makeConsistant\n {%d, %d, %d, %d}, min:%d\n",findmin[0],findmin[1],findmin[2],findmin[3], minVal );
     flood[y][x]=minVal+1;
 }
 
@@ -445,20 +470,19 @@ void floodFill(int x, int y, int xprev, int yprev){
             count +=2;
         }
     }
-    // run until length of stack is 0
-    // fprintf(stderr, "sizeof(Cellstack)/sizeof(int):%ld\n", sizeof(Cellstack)/sizeof(int));
     fprintf(stderr, "sizeof(Cellstack)/sizeof(int):%ld\n", sizeof(Cellstack)/sizeof(int));
     fprintf(stderr, "Cellstack:\n");
+    fprintf(stderr, "count of stack: %d\n", count);
     while(!empty(&Cellstack)){
         int yrun = pop(&Cellstack);
         int xrun = pop(&Cellstack);
         count -=2;
         //fprintf(stderr, "Cellstack.items[%d]: %d\n", count, Cellstack.items[count]);
         if(isConsistant(xrun,yrun)){
-            //break; //pass
+            //break;
         }
         else{
-            makeConsistant(xrun,yrun);
+            makeConsistant(xrun, yrun);
             push(&Cellstack, xrun);
             push(&Cellstack, yrun);
             count +=2;
@@ -470,77 +494,93 @@ void floodFill(int x, int y, int xprev, int yprev){
                     count +=2;
                 }
             }
-            if(x1>=0 && y_1>=0){
+            else if(x1>=0 && y_1>=0){
                 if(isAccessible(xrun,yrun,x1,y_1)){
                     push(&Cellstack, x1);
                     push(&Cellstack, y_1);
                     count +=2;
                 }
             }
-            if(x2>=0 && y2>=0){
+            else if(x2>=0 && y2>=0){
                 if(isAccessible(xrun,yrun,x2,y2)){
                     push(&Cellstack, x2);
                     push(&Cellstack, y2);
                     count +=2;
                 }
             }
-            if(x3>=0 && y3>=0){
+            else if(x3>=0 && y3>=0){
                 if(isAccessible(xrun,yrun,x3,y3)){
                     push(&Cellstack, x3);
                     push(&Cellstack, y3);
                     count +=2;
                 }
             }
+            
+            // remove all values at the end
+            /*
+            if(count>=10){
+                break;
+            }
+            */
+            
         }
         fprintf(stderr, "count of stack: %d\n", count);
     }
+    /*
+    while(!empty(&Cellstack)){
+        int remove = pop(&Cellstack);
+    }
+    */
 }
 
 
 char toMove(int x, int y, int xprev, int yprev, int o){
     getSurrounds(x,y,&x0,&y_0,&x1,&y_1,&x2,&y2,&x3,&y3);
     fprintf(stderr, "\n");
-    int value = flood[y][x];
     int prev = 0;
-    int minVals[4] = {1000,1000,1000,1000};
+    long int minVals[4] = {1000,1000,1000,1000};
     if(isAccessible(x,y,x0,y_0)){
-        if(x0 == xprev && y_0 == yprev){
+        if((x0 == xprev) && (y_0 == yprev)){
             prev = 0;
         }
+        else{}
         minVals[0]=flood[y_0][x0];
     }
     if(isAccessible(x,y,x1,y_1)){
-        if(x1 == xprev && y_1 == yprev){
+        if((x1 == xprev) && (y_1 == yprev)){
             prev = 1;
         }
+        else{}
         minVals[1]=flood[y_1][x1];
     }
     if(isAccessible(x,y,x2,y2)){
-        if(x2 == xprev && y2 == yprev){
+        if((x2 == xprev) && (y2 == yprev)){
             prev = 2;
         }
+        else{}
         minVals[2]=flood[y2][x2];
     }
     if(isAccessible(x,y,x3,y3)){
-        if(x3 == xprev && y3 == yprev){
+        if((x3 == xprev) && (y3 == yprev)){
             prev = 3;
         }
+        else{}
         minVals[3]=flood[y3][x3];
     }
     int minVal=minVals[0]; //flood[y_0][x0]
     int minCell=0;
     int noMovements=0;
+
+    fprintf(stderr,"to move minVals[]:{%ld, %ld, %ld, %ld} %ld, flood[%d][%d]:%d\n", minVals[0], minVals[1], minVals[2], minVals[3], (sizeof(&minVals)/sizeof(int)), y_0, x0,flood[y_0][x0]);
     
-    /*for(int i=0; i<minVal; i++){ // May Cause Problem
-        if(i!=1000){
+    for(int i=0; i<4; i++){ // i in minvals
+        if(minVals[i]!=1000){
             noMovements++;
         }
         else{
             fprintf(stderr,"noMovements:%d\n", noMovements);
         }
     }
-    */
-    noMovements = 1;
     fprintf(stderr,"minVal:%d\n", minVal);
     for(int i=0; i<4; i++){
         if(minVals[i]<minVal){
@@ -550,7 +590,6 @@ char toMove(int x, int y, int xprev, int yprev, int o){
             }
             else{
                 if(i==prev){
-                    //break; // break/pass,noMov or minvals
                 }
                 else{
                     minVal=minVals[i];
@@ -656,14 +695,22 @@ char toMoveBack(int x, int y, int xprev, int yprev, int o){
 }
 */
 
-void showFlood(int xrun, int yrun){
-    for(int i=0; i<8;i++){
-        for(int j=0; j<6; j++){
-            char floodVal[20];
-            itoa(flood[y][x], floodVal, 10);
-            API_setText(i, j, floodVal);
+void showFlood(int xrun, int yrun){ //checked
+    for(int i=0; i<6;i++){
+        for(int j=0; j<8; j++){
+            char floodVal[i];
+            itoa(flood[i][j], floodVal, 10); // 10 is decimal
+            //fprintf(stderr, "floodVal: %s\n", floodVal);
+            API_setText(j, i, floodVal);
         }
     }
+    /*print floodfill to std err
+    for(int i=5; i>=0;i--){
+        for(int j=0; j<8; j++){
+            fprintf(stderr, "[%d]", flood[i][j]);
+        }
+    fprintf(stderr, "\n");
+    }*/
 }
 
 
@@ -689,11 +736,6 @@ int main(int argc, char* argv[]) {
     getSurrounds(x,y,&x0,&y_0,&x1,&y_1,&x2,&y2,&x3,&y3);
     fprintf(stderr, "When robot is at (%d,%d):\n\tN(%d,%d), \nW(%d,%d)\t\tE(%d,%d), \n\tS(%d,%d)\n", x,y,x0,y_0,x3,y3,x1,y_1,x2,y2);
     // end test */
-    int x=0; // API_updateCoordinates(&x,&y,o);
-    int y=0;
-    int xprev=0;
-    int yprev=0;
-    int o=0;
     
     while (1) {
 
@@ -704,8 +746,8 @@ int main(int argc, char* argv[]) {
         updateWalls(x, y, o, L, R, F); //update cells[y][x]
         //Print Coordinates
         
-        if (flood[x][y] != 0){ // if not at the centre
-            floodFill(x, y, xprev, yprev);
+        if (flood[y][x] != 0){ // if not at the centre
+            floodFill(x, y, xprev, yprev);//here
         }
         else{ // if at centre
             return(0); // end program.
@@ -730,8 +772,57 @@ int main(int argc, char* argv[]) {
             o = API_orientation(o, 'L');
         } 
         //logTxt("Im moving forward now");1
-        fprintf(stderr, "\nAPI_updateCoordinates: o=%d,L=%d, R=%d, F=%d (%d, %d),\n\tN(%d, %d),\nW(%d, %d),\t\tE(%d, %d),\n\tS(%d, %d)\n", o, L, R, F, x, y,x0,y_0,x3,y3,x1,y_1,x2,y2);
-
+        fprintf(stderr, "\nAPI_updateCoordinates:\n");
+        fprintf(stderr, "Flood:\n   [%d]\n[%d][%d][%d]\n   [%d]\n", flood[x0][y_0],flood[y3][x3],flood[y][x],flood[y_1][x1],flood[y2][x2]);
+        fprintf(stderr, "o=%d,L=%d, R=%d, F=%d\n\tN(%d, %d),\nW(%d, %d), X(%d, %d),  E(%d, %d),\n\tS(%d, %d)\n", o, L, R, F,x0,y_0,x3,y3,x,y,x1,y_1,x2,y2);
+        if(cells[y][x]==1){
+            fprintf(stderr, "o   o\n|    \no   o\n");
+        }
+        if(cells[y][x]==2){
+            fprintf(stderr, "o---o\n     \no   o\n");
+        }
+        if(cells[y][x]==3){
+            fprintf(stderr, "o   o\n    |\no   o\n");
+        }
+        if(cells[y][x]==4){
+            fprintf(stderr, "o   o\n     \no---o\n");
+        }
+        if(cells[y][x]==5){
+            fprintf(stderr, "o   o\n|    \no---o\n");
+        }
+        if(cells[y][x]==6){
+            fprintf(stderr, "o   o\n    |\no---o\n");
+        }
+        if(cells[y][x]==7){
+            fprintf(stderr, "o---o\n    |\no   o\n");
+        }
+        if(cells[y][x]==8){
+            fprintf(stderr, "o---o\n|    \no   o\n");
+        }
+        if(cells[y][x]==9){
+            fprintf(stderr, "o   o\n|   |\no   o\n");
+        }
+        if(cells[y][x]==10){
+            fprintf(stderr, "o---o\n     \no---o\n");
+        }
+        if(cells[y][x]==11){
+            fprintf(stderr, "o   o\n|   |\no   o\n");
+        }
+        if(cells[y][x]==12){
+            fprintf(stderr, "o---o\n    |\no---o\n");
+        }
+        if(cells[y][x]==13){
+            fprintf(stderr, "o---o\n|   |\no   o\n");
+        }
+        if(cells[y][x]==14){
+            fprintf(stderr, "o---o\n|    \no---o\n");
+        }
+        if(cells[y][x]==15){
+            fprintf(stderr, "o   o\n     \no   o\n");
+        }
+        if(cells[y][x]==16){
+            fprintf(stderr, "o---o\n|   |\no---o\n");
+        }
         showFlood(x,y);
         API_moveForward();
         xprev = x;
@@ -750,6 +841,7 @@ int main(int argc, char* argv[]) {
         if(o==3){
             x--;
         }
+        logTxt("------------------------------");
         
         /* Left wall Follower:
 
